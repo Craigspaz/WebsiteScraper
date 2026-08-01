@@ -74,11 +74,15 @@ def lambda_handler(event, context):
             all_text = driver.find_element(By.TAG_NAME, "body").text
             logger.debug(f"Found text {all_text}")
             response["body"] = all_text
-            title = driver.find_element(By.TAG_NAME, "title").text
-            if title is not None:
-                response["title"] = title
+            page_title = driver.title
+            if page_title is not None:
+                response["title"] = page_title
             else:
-                response["title"] = site_url
+                title = driver.find_element(By.TAG_NAME, "title").text
+                if title is not None:
+                    response["title"] = title
+                else:
+                    response["title"] = site_url
         else:
             logger.warning("Site URL is None...")
 
