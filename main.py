@@ -71,7 +71,7 @@ def lambda_handler(event, context):
             logger.info(f"Fetching URL: {site_url}")
             driver.get(site_url)
             time.sleep(3) # sleep to wait for page to load
-            all_text = driver.find_element("By.TAG_NAME", "body").text
+            all_text = driver.find_element(By.TAG_NAME, "body").text
             logger.debug(f"Found text {all_text}")
         else:
             logger.warning("Site URL is None...")
