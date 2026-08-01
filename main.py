@@ -74,7 +74,7 @@ def lambda_handler(event, context):
             all_text = driver.find_element(By.TAG_NAME, "body").text
             logger.debug(f"Found text {all_text}")
             response["body"] = all_text
-            title = driver.find_element(By.TAG_NAME, "title")
+            title = driver.find_element(By.TAG_NAME, "title").text
             if title is not None:
                 response["title"] = title
             else:
@@ -86,7 +86,7 @@ def lambda_handler(event, context):
         s3_path = urlunparse(s3_path._replace(query=""))
         logger.debug(f"Attempting to upload file to {S3_BUCKET}/{s3_path}")
         try:
-            s3_client.put_object(Body=json.dumps(response), ContentType="text/plain", Bucket=S3_BUCKET, Key=s3_path, Metadata={"url": site_url})
+            s3_client.put_object(Body=json.dumps(response), ContentType="application/json", Bucket=S3_BUCKET, Key=s3_path, Metadata={"url": site_url})
         except Exception as e:
             logger.error(f"Caught Exception while trying to upload file to S3 Bucket {e}")
         logger.info(f"Successfully Uploaded file to bucket...")
