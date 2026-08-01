@@ -64,15 +64,21 @@ def lambda_handler(event, context):
         except Exception as e:
             logger.warning("Failed to parse message body as json. Continuing with blank record...")
         logger.debug(f"Processing Record {record}")
-        all_text = ""
 
         site_url = record.get("url", None)
+        response = {"body": "", "title": "", "url": site_url}
         if site_url is not None:
             logger.info(f"Fetching URL: {site_url}")
             driver.get(site_url)
             time.sleep(3) # sleep to wait for page to load
             all_text = driver.find_element(By.TAG_NAME, "body").text
             logger.debug(f"Found text {all_text}")
+            response["body"] = all_text
+            title = driver.find_element(By.TAG_NAME, "title")
+            if title is not None:
+                response["title"] = title
+            else:
+                response["title"] = site_url
         else:
             logger.warning("Site URL is None...")
 
@@ -80,7 +86,7 @@ def lambda_handler(event, context):
         s3_path = urlunparse(s3_path._replace(query=""))
         logger.debug(f"Attempting to upload file to {S3_BUCKET}/{s3_path}")
         try:
-            s3_client.put_object(Body=all_text, ContentType="text/plain", Bucket=S3_BUCKET, Key=s3_path, Metadata={"url": site_url})
+            s3_client.put_object(Body=json.dumps(response), ContentType="text/plain", Bucket=S3_BUCKET, Key=s3_path, Metadata={"url": site_url})
         except Exception as e:
             logger.error(f"Caught Exception while trying to upload file to S3 Bucket {e}")
         logger.info(f"Successfully Uploaded file to bucket...")
