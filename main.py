@@ -13,6 +13,7 @@ import logging
 import time
 from urllib.parse import urlparse, urlunparse
 logger = logging.getLogger()
+logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 
 
 S3_BUCKET = os.getenv("S3_BUCKET", None)
