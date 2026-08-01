@@ -17,7 +17,6 @@ logger = logging.getLogger()
 
 S3_BUCKET = os.getenv("S3_BUCKET", None)
 REGION_NAME = os.getenv("AWS_REGION", "us-east-1")
-CLOUDFRONT_DISTRO = os.getenv("CLOUDFRONT_DISTRO", None)
 
 
 ## This code is from: https://medium.com/@kroeze.wb/running-selenium-in-aws-lambda-806c7e88ec64 / https://github.com/wbytedev/wbyte-selenium-lambda
